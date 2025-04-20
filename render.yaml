@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: django-result-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn resultPROJ.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: resultPROJ.settings
+      - key: SECRET_KEY
+        value: os.getenv('SECRET_KEY', 'fallback-secret-key')
+      - key: ALLOWED_HOSTS
+        value: "render.com"
