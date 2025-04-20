@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Report Card</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f8f7;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .report-card {
+      background: #e0f2f1;
+      width: 800px;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      margin-bottom: 15px;
+      border: 1px solid #b2dfdb;
+      border-radius: 6px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+    }
+
+    .header-info {
+      line-height: 1.8;
+    }
+
+    .header-info strong {
+      color: #00796b;
+    }
+
+    .badge {
+      background: #80cbc4;
+      padding: 4px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .school-name {
+      text-align: center;
+      background: #009688;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .grades-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .grades-table th,
+    .grades-table td {
+      border: 1px solid #a7d6cf;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .grades-table th {
+      background-color: #b2dfdb;
+      color: #004d40;
+    }
+
+    .section {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .final-result, .teacher-comment {
+      width: 48%;
+    }
+
+    .final-result h3,
+    .teacher-comment h3 {
+      background: #26a69a;
+      color: white;
+      padding: 10px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .final-result p,
+    .teacher-comment p {
+      background: white;
+      padding: 10px;
+      border-radius: 0 0 5px 5px;
+      margin: 0;
+      min-height: 80px;
+    }
+
+    .error-msg {
+      color: red;
+      font-weight: bold;
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="report-card">
+
+    <div class="form-section">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Show Result</button>
+      </form>
+    </div>
+
+    {% if result %}
+    <div class="header">
+      <div class="header-info">
+        <p><strong>Student Name:</strong> {{ result.name }}</p>
+        <p><strong>Hall Ticket No:</strong> {{ result.hall_ticket }}</p>
+      </div>
+      <div class="badge">
+        {% if result.photo %}
+        <img src="{{ result.photo.url }}" alt="Student Photo" width="150" height="150" style="border-radius:10px; border: 2px solid #444;">
+{% else %}
+    <p>No photo uploaded.</p>
+{% endif %}
+      </div>
+    </div>
+
+    <div class="school-name">
+      KR High School - Report Card
+    </div>
+
+    <table class="grades-table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Final Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Telugu</td><td>{{ result.telugu }}</td></tr>
+        <tr><td>Hindi</td><td>{{ result.hindi }}</td></tr>
+        <tr><td>English</td><td>{{ result.english }}</td></tr>
+        <tr><td>Maths</td><td>{{ result.maths }}</td></tr>
+        <tr><td>Science</td><td>{{ result.science }}</td></tr>
+        <tr><td>Social</td><td>{{ result.social }}</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section">
+      <div class="final-result">
+        <h3>Final Results</h3>
+        <p>
+          Total Marks: {{ result.total_marks }}<br>
+          Obtained Marks: {{ result.obtained_marks }}<br>
+          Percentage: {{ result.percentage }}%
+        </p>
+      </div>
+      <div class="teacher-comment">
+        <h3>Teacher's Comment</h3>
+        <p>
+          {% if result.percentage >= 90 %}
+            Excellent performance. Keep it up!
+          {% elif result.percentage >= 75 %}
+            Very good. Aim for excellence.
+          {% elif result.percentage >= 50 %}
+            Good, but room for improvement.
+          {% else %}
+            Needs serious attention and effort.
+          {% endif %}
+        </p>
+      </div>
+    </div>
+    {% elif error %}
+      <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+  </div>
+</body>
+</html>
